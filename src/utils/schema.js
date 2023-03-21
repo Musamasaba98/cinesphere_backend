@@ -4,9 +4,12 @@ import Joi from "joi";
 const user = Joi.object({
     email: Joi.string().email().lowercase().required(),
     age: Joi.number().integer().min(18),
-    name: Joi.string().min(3).max(40).trim().required(),
+    fullname: Joi.string().min(3).max(40).trim().required(),
+    username: Joi.string().min(3).max(40).trim().required(),
     password: Joi.string().min(7).required().strict(),
-    role: Joi.string().uppercase().trim()
+    role: Joi.string().uppercase().trim(),
+    gender: Joi.string().uppercase().trim(),
+    image: Joi.any()
 })
 //login schema
 const login = Joi.object({

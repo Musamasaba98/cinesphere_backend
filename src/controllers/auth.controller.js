@@ -5,10 +5,13 @@ import customError from "../utils/customError.js";
 import bcrypt from 'bcryptjs'
 import exclude from "../utils/prisma.exclude.js";
 import { promisify } from 'util'
+import cloudinary from "../config/cloudinary.config.js";
 
 
 export const signup = tryToCatch(async (req, res) => {
-    const { email, fullname, username, password, gender, age, role, imageUrl, } = req.body
+    const result = await cloudinary.uploader.upload(req.file.path);
+    console.log(result)
+    const { email, fullname, username, password, gender, age, role } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await prisma.user.create({
         data: {
@@ -16,8 +19,8 @@ export const signup = tryToCatch(async (req, res) => {
             fullname,
             username,
             gender,
-            imageUrl,
-            age,
+            imageUrl: result.secure_url,
+            age: Number(age),
             password: hashedPassword,
             role,
             userPreference: {
