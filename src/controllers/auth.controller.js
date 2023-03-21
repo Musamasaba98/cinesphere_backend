@@ -8,12 +8,15 @@ import { promisify } from 'util'
 
 
 export const signup = tryToCatch(async (req, res) => {
-    const { email, name, password, age, role } = req.body
+    const { email, fullname, username, password, gender, age, role, imageUrl, } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await prisma.user.create({
         data: {
             email,
-            name,
+            fullname,
+            username,
+            gender,
+            imageUrl,
             age,
             password: hashedPassword,
             role,
@@ -26,9 +29,9 @@ export const signup = tryToCatch(async (req, res) => {
 
 
     })
-    const url = `${req.protocol}://${req.get('host')}/me`;
-    console.log(url)
-    await new Email(user, url).sendWelcome();
+    // const url = `${req.protocol}://${req.get('host')}/me`;
+    // console.log(url)
+    // await new Email(user, url).sendWelcome();
     res
         .status(201)
         .json({ status: "success", data: user });
