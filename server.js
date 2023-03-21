@@ -1,10 +1,32 @@
-import express from 'express'
+import app from './app.js'
+import dotenv from 'dotenv-safe'
 
-const PORT = process.env.PORT || 10000,
-    app = express();
 
-app.get('/', (req, res) => {
-    res.send('Hello welcome to CineSphere Backend API')
-})
+dotenv.config()
 
-app.listen(PORT, () => console.log(`Server has started at port ${PORT}`))  
+
+const PORT = process.env.PORT || 10000;
+
+process.on("uncaughtException", (err) => {
+    console.log("Uncaught Exception: ", err.message);
+    console.log("Closing server now...");
+    process.exit(1);
+});
+
+
+const server = app.listen(PORT, () => console.log(`Server has started at port ${PORT}`))
+
+process.on("unhandledRejection", (err) => {
+    console.log(err);
+    console.log("Closing server now...");
+    server.close(() => {
+        process.exit(1);
+    });
+});
+process.on("SIGTERM", () => {
+    console.log("SIGTERM received. Shutting down gracefully");
+    server.close(() => {
+        console.log("Closed out remaining connections");
+        process.exit(0);
+    });
+});
