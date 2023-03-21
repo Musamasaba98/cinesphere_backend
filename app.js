@@ -1,4 +1,5 @@
 import express from "express";
+import cors from 'cors'
 import userRouter from "./src/routes/user.route.js"
 import movieRouter from "./src/routes/movie.route.js"
 import genreRouter from "./src/routes/genre.route.js"
@@ -8,7 +9,7 @@ import customError from "./src/utils/customError.js";
 
 const app = express();
 
-
+app.use(cors())
 app.use("/static", express.static("./src/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "15kb" }));
