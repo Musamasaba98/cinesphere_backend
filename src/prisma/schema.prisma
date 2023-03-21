@@ -11,7 +11,171 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id               String          @id @default(uuid())
+  email            String          @unique
+  fullname         String?
+  age              Int
+  username         String          @unique
+  gender           Gender?
+  password         String
+  imageUrl         String
+  userPreferenceId String?         @unique
+  role             Role            @default(USER)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime?       @updatedAt
+  userPreference   UserPreference? @relation(fields: [userPreferenceId], references: [id])
+  refreshToken     RefreshToken[]
+  moviesAdded      Movie[]         @relation("addedMovies")
+  moviesWatched    Movie[]         @relation("watchedBy")
+  favouritedMovies Movie[]         @relation("favouritedBy")
+  ratedMovies      Movie[]         @relation("ratedBy")
+  watchLaterBy     Movie[]         @relation("watchLaterMovies")
+
+  @@unique([fullname, age])
+  @@index([email])
+}
+
+model UserPreference {
+  id           String  @id @default(uuid())
+  emailUpdates Boolean
+  user         User?
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  clientId  String
+  token     String   @unique
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+}
+
+model Movie {
+  id                     String                   @id @default(uuid())
+  title                  String                   @db.VarChar(255)
+  description            String?                  @db.VarChar(1000)
+  price                  Int
+  coverUrl               String?                  @db.VarChar(1000)
+  imageUrl               String[]
+  videoUrl               String?                  @db.VarChar(1000)
+  trailerUrl             String?                  @db.VarChar(1000)
+  budget                 BigInt                   @db.BigInt
+  revenue                BigInt                   @db.BigInt
+  voteCount              Int
+  voteAverage            Float
+  releaseStatus          Boolean                  @db.Boolean
+  release_date           DateTime                 @db.Timestamp
+  createdAt              DateTime                 @default(now()) @db.Timestamp
+  MovieCast              MovieCast[]
+  MovieCrew              MovieCrew[]
+  Genre                  Genre?                   @relation(fields: [genreId], references: [id])
+  genreId                String?
+  Language               Language?                @relation(fields: [languageId], references: [id])
+  languageId             String?
+  createdBy              User?                    @relation("addedMovies", fields: [creatorId], references: [id])
+  creatorId              String?
+  favouritedBy           User?                    @relation("favouritedBy", fields: [favouritedById], references: [id])
+  favouritedById         String?
+  ratedBy                User?                    @relation("ratedBy", fields: [ratedById], references: [id])
+  ratedById              String?
+  watchedBy              User?                    @relation("watchedBy", fields: [watchedById], references: [id])
+  watchedById            String?
+  watchLater             User?                    @relation("watchLaterMovies", fields: [watchLaterById], references: [id])
+  watchLaterById         String?
+  productionCompanies    ProductionCompany[]
+  MovieProductionCompany MovieProductionCompany[]
+
+  @@index([title])
+}
+
+model Genre {
+  id     String  @id @default(uuid())
+  name   String
+  movies Movie[]
+}
+
+model Language {
+  id     String  @id @default(uuid())
+  name   String
+  movies Movie[]
+}
+
+model MovieProductionCompany {
+  id                  String            @id @default(uuid())
+  movieId             String            @map("movie_id")
+  productionCompanyId String            @map("production_company_id")
+  movie               Movie             @relation(fields: [movieId], references: [id])
+  productionCompany   ProductionCompany @relation(fields: [productionCompanyId], references: [id])
+}
+
+model ProductionCompany {
+  id                     String                   @id @default(uuid())
+  name                   String
+  movies                 Movie[]
+  MovieProductionCompany MovieProductionCompany[]
+}
+
+model Person {
+  id           String      @id @default(uuid())
+  personName   String
+  personGender Gender?
+  MovieCrew    MovieCrew[]
+  MovieCast    MovieCast[]
+}
+
+model MovieCrew {
+  id                  String                @id @default(uuid())
+  jobTitle            JobTitle?             @relation(fields: [jobTitleId], references: [id])
+  personId            String?
+  Person              Person?               @relation(fields: [personId], references: [id])
+  movie               Movie                 @relation(fields: [movieId], references: [id])
+  jobTitleId          String?
+  movieId             String
+  Department          Department[]
+  MovieCrewDepartment MovieCrewDepartment[]
+}
+
+model MovieCast {
+  id            String  @id @default(uuid())
+  characterName String?
+  personId      String?
+  movie         Movie   @relation(fields: [movieId], references: [id])
+  movieId       String
+  Person        Person? @relation(fields: [personId], references: [id])
+}
+
+model MovieCrewDepartment {
+  id           String     @id @default(uuid())
+  crew         MovieCrew  @relation(fields: [movieCrewId], references: [id])
+  department   Department @relation(fields: [departmentId], references: [id])
+  movieCrewId  String
+  departmentId String
+}
+
+model Department {
+  id                  String                @id @default(uuid())
+  name                String
+  crew                MovieCrew             @relation(fields: [movieCrewId], references: [id])
+  movieCrewId         String
+  MovieCrewDepartment MovieCrewDepartment[]
+}
+
+model JobTitle {
+  id   String      @id @default(uuid())
+  name String
+  crew MovieCrew[]
+}
+
+enum Role {
+  USER
+  CREATOR
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
