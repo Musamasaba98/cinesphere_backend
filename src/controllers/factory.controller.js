@@ -17,7 +17,7 @@ export const deleteOne = Model => tryToCatch(async (req, res, next) => {
 })
 
 export const updateOne = Modal => tryToCatch(async (req, res, next) => {
-    const updated = await prisma[category].update({
+    const updated = await prisma[Modal].update({
         where: {
             id: req.params.id
         },

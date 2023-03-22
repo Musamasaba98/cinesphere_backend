@@ -11,25 +11,26 @@ datasource db {
 }
 
 model User {
-  id               String          @id @default(uuid())
-  email            String          @unique
-  fullname         String?
-  age              Int
-  username         String          @unique
-  gender           Gender?
-  password         String
-  imageUrl         String
-  userPreferenceId String?         @unique
-  role             Role            @default(USER)
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime?       @updatedAt
-  userPreference   UserPreference? @relation(fields: [userPreferenceId], references: [id])
-  refreshToken     RefreshToken[]
-  moviesAdded      Movie[]         @relation("addedMovies")
-  moviesWatched    Movie[]         @relation("watchedBy")
-  favouritedMovies Movie[]         @relation("favouritedBy")
-  ratedMovies      Movie[]         @relation("ratedBy")
-  watchLaterBy     Movie[]         @relation("watchLaterMovies")
+  id                   String          @id @default(uuid())
+  email                String          @unique
+  fullname             String?
+  age                  Int
+  username             String          @unique
+  gender               Gender?
+  password             String
+  imageUrl             String?
+  cloudinary_public_id String?         @unique
+  userPreferenceId     String?         @unique
+  role                 Role            @default(USER)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime?       @updatedAt
+  userPreference       UserPreference? @relation(fields: [userPreferenceId], references: [id])
+  refreshToken         RefreshToken[]
+  moviesAdded          Movie[]         @relation("addedMovies")
+  moviesWatched        Movie[]         @relation("watchedBy")
+  favouritedMovies     Movie[]         @relation("favouritedBy")
+  ratedMovies          Movie[]         @relation("ratedBy")
+  watchLaterBy         Movie[]         @relation("watchLaterMovies")
 
   @@unique([fullname, age])
   @@index([email])

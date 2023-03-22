@@ -10,7 +10,6 @@ import cloudinary from "../config/cloudinary.config.js";
 
 export const signup = tryToCatch(async (req, res) => {
     const result = await cloudinary.uploader.upload(req.file.path);
-    console.log(result)
     const { email, fullname, username, password, gender, age, role } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await prisma.user.create({
@@ -21,6 +20,7 @@ export const signup = tryToCatch(async (req, res) => {
             gender,
             imageUrl: result.secure_url,
             age: Number(age),
+            cloudinary_public_id: result.public_id,
             password: hashedPassword,
             role,
             userPreference: {
@@ -32,14 +32,34 @@ export const signup = tryToCatch(async (req, res) => {
 
 
     })
+    const userWithoutPassword = exclude(user, ['password'])
     // const url = `${req.protocol}://${req.get('host')}/me`;
     // console.log(url)
     // await new Email(user, url).sendWelcome();
     res
         .status(201)
-        .json({ status: "success", data: user });
+        .json({ status: "success", data: userWithoutPassword });
 
 })
+export const updatePassword = tryToCatch(async (req, res, next) => {
+    const { password } = req.body
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const updated = await prisma.user.update({
+        where: {
+            id: req.params.id
+        },
+        data: {
+            password: hashedPassword
+        }
+
+    })
+    if (!updated) {
+        return next(new customError(`There is no ${Modal} with that ID ${req.params.id}`, 404))
+    }
+    res.status(200).json({ status: "success", data: updated })
+
+})
+
 export const login = tryToCatch(async (req, res, next) => {
     const user = await prisma.user.findUnique({
         where: {
