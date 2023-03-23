@@ -7,7 +7,7 @@ const validateRequest = validation(true)
 const router = express.Router()
 
 router.route("/")
-    .post(authenticateToken, restrictTo("ADMIN", "EDITOR"), validateRequest, addMovie)
+    .post(authenticateToken, addMovie)
     .get(getAllMovies)
 router.route("/:id")
     .get(getMovie)

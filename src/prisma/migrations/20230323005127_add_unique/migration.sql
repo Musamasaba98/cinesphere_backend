@@ -192,6 +192,15 @@ CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");
 CREATE INDEX "Movie_title_idx" ON "Movie"("title");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Genre_name_key" ON "Genre"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Language_name_key" ON "Language"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ProductionCompany_name_key" ON "ProductionCompany"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_MovieToProductionCompany_AB_unique" ON "_MovieToProductionCompany"("A", "B");
 
 -- CreateIndex
