@@ -55,37 +55,41 @@ model RefreshToken {
 }
 
 model Movie {
-  id             String      @id @default(uuid())
-  title          String      @db.VarChar(255)
-  description    String?     @db.VarChar(1000)
-  price          Int
-  coverUrl       String?     @db.VarChar(1000)
-  imageUrl       String[]
-  videoUrl       String?     @db.VarChar(1000)
-  trailerUrl     String?     @db.VarChar(1000)
-  budget         BigInt      @db.BigInt
-  revenue        BigInt      @db.BigInt
-  voteCount      Int
-  voteAverage    Float
-  releaseStatus  Boolean     @db.Boolean
-  release_date   DateTime    @db.Timestamp
-  createdAt      DateTime    @default(now()) @db.Timestamp
-  MovieCast      MovieCast[]
-  MovieCrew      MovieCrew[]
-  Genre          Genre?      @relation(fields: [genreId], references: [id])
-  genreId        String?
-  Language       Language?   @relation(fields: [languageId], references: [id])
-  languageId     String?
-  createdBy      User?       @relation("addedMovies", fields: [creatorId], references: [id])
-  creatorId      String?
-  favouritedBy   User?       @relation("favouritedBy", fields: [favouritedById], references: [id])
-  favouritedById String?
-  ratedBy        User?       @relation("ratedBy", fields: [ratedById], references: [id])
-  ratedById      String?
-  watchedBy      User?       @relation("watchedBy", fields: [watchedById], references: [id])
-  watchedById    String?
-  watchLater     User?       @relation("watchLaterMovies", fields: [watchLaterById], references: [id])
-  watchLaterById String?
+  id                              String      @id @default(uuid())
+  title                           String      @db.VarChar(255)
+  description                     String?     @db.VarChar(1000)
+  price                           Int
+  coverUrl                        String?     @db.VarChar(1000)
+  cloudinary_coverUrl_public_id   String?
+  imageUrl                        String?
+  cloudinary_imageUrl_public_id   String?
+  videoUrl                        String?     @db.VarChar(1000)
+  cloudinary_videoUrl_public_id   String?
+  trailerUrl                      String?     @db.VarChar(1000)
+  cloudinary_trailerUrl_public_id String?
+  budget                          BigInt      @db.BigInt
+  revenue                         BigInt      @db.BigInt
+  voteCount                       Int
+  voteAverage                     Float
+  releaseStatus                   Boolean     @db.Boolean
+  release_date                    DateTime    @db.Timestamp
+  createdAt                       DateTime    @default(now()) @db.Timestamp
+  MovieCast                       MovieCast[]
+  MovieCrew                       MovieCrew[]
+  Genre                           Genre?      @relation(fields: [genreId], references: [id])
+  genreId                         String?
+  Language                        Language?   @relation(fields: [languageId], references: [id])
+  languageId                      String?
+  createdBy                       User?       @relation("addedMovies", fields: [creatorId], references: [id])
+  creatorId                       String?
+  favouritedBy                    User?       @relation("favouritedBy", fields: [favouritedById], references: [id])
+  favouritedById                  String?
+  ratedBy                         User?       @relation("ratedBy", fields: [ratedById], references: [id])
+  ratedById                       String?
+  watchedBy                       User?       @relation("watchedBy", fields: [watchedById], references: [id])
+  watchedById                     String?
+  watchLater                      User?       @relation("watchLaterMovies", fields: [watchLaterById], references: [id])
+  watchLaterById                  String?
 
   MovieProductionCompany MovieProductionCompany[]
 
