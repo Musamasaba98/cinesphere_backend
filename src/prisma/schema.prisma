@@ -55,43 +55,42 @@ model RefreshToken {
 }
 
 model Movie {
-  id                              String      @id @default(uuid())
-  title                           String      @db.VarChar(255)
-  description                     String?     @db.VarChar(1000)
+  id                              String                   @id @default(uuid())
+  title                           String                   @db.VarChar(255)
+  description                     String?                  @db.VarChar(1000)
   price                           Int
-  coverUrl                        String?     @db.VarChar(1000)
+  coverUrl                        String?                  @db.VarChar(1000)
   cloudinary_coverUrl_public_id   String?
   imageUrl                        String?
   cloudinary_imageUrl_public_id   String?
-  videoUrl                        String?     @db.VarChar(1000)
+  videoUrl                        String?                  @db.VarChar(1000)
   cloudinary_videoUrl_public_id   String?
-  trailerUrl                      String?     @db.VarChar(1000)
+  trailerUrl                      String?                  @db.VarChar(1000)
   cloudinary_trailerUrl_public_id String?
-  budget                          BigInt      @db.BigInt
-  revenue                         BigInt      @db.BigInt
+  budget                          BigInt                   @db.BigInt
+  revenue                         BigInt                   @db.BigInt
   voteCount                       Int
   voteAverage                     Float
-  releaseStatus                   Boolean     @db.Boolean
-  release_date                    DateTime    @db.Timestamp
-  createdAt                       DateTime    @default(now()) @db.Timestamp
+  releaseStatus                   Boolean                  @db.Boolean
+  release_date                    DateTime                 @db.Timestamp
+  createdAt                       DateTime                 @default(now()) @db.Timestamp
   MovieCast                       MovieCast[]
   MovieCrew                       MovieCrew[]
-  Genre                           Genre?      @relation(fields: [genreId], references: [id])
+  Genre                           Genre?                   @relation(fields: [genreId], references: [id])
   genreId                         String?
-  Language                        Language?   @relation(fields: [languageId], references: [id])
+  Language                        Language?                @relation(fields: [languageId], references: [id])
   languageId                      String?
-  createdBy                       User?       @relation("addedMovies", fields: [creatorId], references: [id])
+  createdBy                       User?                    @relation("addedMovies", fields: [creatorId], references: [id])
   creatorId                       String?
-  favouritedBy                    User?       @relation("favouritedBy", fields: [favouritedById], references: [id])
+  favouritedBy                    User?                    @relation("favouritedBy", fields: [favouritedById], references: [id])
   favouritedById                  String?
-  ratedBy                         User?       @relation("ratedBy", fields: [ratedById], references: [id])
+  ratedBy                         User?                    @relation("ratedBy", fields: [ratedById], references: [id])
   ratedById                       String?
-  watchedBy                       User?       @relation("watchedBy", fields: [watchedById], references: [id])
+  watchedBy                       User?                    @relation("watchedBy", fields: [watchedById], references: [id])
   watchedById                     String?
-  watchLater                      User?       @relation("watchLaterMovies", fields: [watchLaterById], references: [id])
+  watchLater                      User?                    @relation("watchLaterMovies", fields: [watchLaterById], references: [id])
   watchLaterById                  String?
-
-  MovieProductionCompany MovieProductionCompany[]
+  productionCompanies             MovieProductionCompany[]
 
   @@index([title])
 }
@@ -113,14 +112,15 @@ model MovieProductionCompany {
   productionCompanyId String
   movie               Movie             @relation(fields: [movieId], references: [id])
   productionCompany   ProductionCompany @relation(fields: [productionCompanyId], references: [id])
+  assignedAt          DateTime          @default(now())
 
   @@id([movieId, productionCompanyId])
 }
 
 model ProductionCompany {
-  id                     String                   @id @default(uuid())
-  name                   String                   @unique
-  MovieProductionCompany MovieProductionCompany[]
+  id     String                   @id @default(uuid())
+  name   String                   @unique
+  movies MovieProductionCompany[]
 }
 
 model Person {
