@@ -1,5 +1,7 @@
 import cloudinary from "../config/cloudinary.config.js";
 import prisma from "../config/prisma.config.js";
+import customError from "../utils/customError.js";
+import { toSentenceCase } from "../utils/toSentenceCase.js";
 import tryToCatch from "../utils/tryToCatch.js";
 import { deleteOne, getAll, getOne, updateOne } from "./factory.controller.js";
 
@@ -9,7 +11,7 @@ export const addMovie = tryToCatch(async (req, res) => {
     const uploadedFiles = [];
     for (const fieldname in req.files) {
         const file = req.files[fieldname][0];
-        const result = await cloudinary.uploader.upload(file.path);
+        const result = await cloudinary.uploader.upload(file.path, { quality: 'auto' });
         uploadedFiles.push(result);
     }
     // const videoResult = await cloudinary.uploader.upload_large(req.file, {
@@ -75,6 +77,24 @@ export const addMovie = tryToCatch(async (req, res) => {
     })
 
 })
+//Delete a movie
+export const deleteMovie = tryToCatch(async (req, res, next) => {
+    const id = req.params.id
+    await prisma.movieProductionCompany.deleteMany({
+        where: {
+            movieId: id
+        }
+    });
+    const deleted = await prisma.movie.delete({
+        where: {
+            id: id
+        }
+    });
+    if (!deleted) {
+        return next(new customError(`There is no Movie with that ID ${id}`, 404))
+    }
+    res.status(200).json({ status: "success", message: `${toSentenceCase("movie")} has successfully been deleted` })
+})
 
 //Get all movies
 export const getAllMovies = getAll("movie")
@@ -84,6 +104,3 @@ export const getMovie = getOne("movie")
 
 //Update a movie
 export const updateMovie = updateOne("movie")
-
-//Delete a movie
-export const deleteMovie = deleteOne("movie")

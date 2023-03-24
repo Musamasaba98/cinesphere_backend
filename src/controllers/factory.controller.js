@@ -14,6 +14,7 @@ export const deleteOne = Model => tryToCatch(async (req, res, next) => {
         return next(new customError(`There is no ${Model} with that ID ${id}`, 404))
     }
     res.status(204).json({ status: "success", message: `${toSentenceCase(Model)} has successfully been deleted` })
+
 })
 
 export const updateOne = Modal => tryToCatch(async (req, res, next) => {
@@ -26,7 +27,12 @@ export const updateOne = Modal => tryToCatch(async (req, res, next) => {
     if (!updated) {
         return next(new customError(`There is no ${Modal} with that ID ${req.params.id}`, 404))
     }
-    res.status(200).json({ status: "success", data: updated })
+    Modal !== 'movie' ? res.status(200).json({ status: "success", data: updated }) : (res.status(200).send({
+        status: "success", data: JSON.parse(JSON.stringify(
+            updated,
+            (key, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
+        ))
+    }))
 
 })
 
@@ -40,13 +46,25 @@ export const getOne = (Modal) => tryToCatch(async (req, res, next) => {
     if (!item) {
         return next(new customError(`There is no ${Modal} with that ID ${req.params.id}`, 404))
     }
-    res.status(200).json({ status: "success", data: item })
+    Modal !== 'movie' ? res.status(200).json({ status: "success", data: item }) : (res.status(200).send({
+        status: "success", data: JSON.parse(JSON.stringify(
+            item,
+            (key, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
+        ))
+    }))
 
 
 })
 export const getAll = (Modal) => tryToCatch(async (req, res) => {
-
     const items = await prisma[Modal].findMany()
+    if (Modal === 'movie') {
+        res.status(200).json({
+            status: "success", results: items.length, data: JSON.parse(JSON.stringify(
+                items,
+                (key, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
+            ))
+        })
+    }
     res.status(200).json({ status: "success", results: items.length, data: items })
 
 })

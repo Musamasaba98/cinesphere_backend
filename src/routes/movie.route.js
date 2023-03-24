@@ -15,7 +15,7 @@ router.route("/")
     .get(getAllMovies)
 router.route("/:id")
     .get(getMovie)
-    .patch(authenticateToken, updateMovie)
+    .patch(updateMovie)
     .delete(authenticateToken, deleteMovie)
 
 

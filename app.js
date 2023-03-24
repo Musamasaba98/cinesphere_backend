@@ -11,8 +11,8 @@ const app = express();
 
 app.use(cors())
 app.use("/static", express.static("./src/public"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: "15kb" }));
+app.use(express.json({ limit: '1gb' }));
+app.use(express.urlencoded({ limit: '1gb', extended: true }));
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/movies", movieRouter)
 app.use("/api/v1/genre", genreRouter)

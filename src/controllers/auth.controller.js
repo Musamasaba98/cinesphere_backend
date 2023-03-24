@@ -10,7 +10,7 @@ import cloudinary from "../config/cloudinary.config.js";
 
 export const signup = tryToCatch(async (req, res) => {
     console.log(req.file.path)
-    const result = await cloudinary.uploader.upload(req.file.path);
+    const result = await cloudinary.uploader.upload(req.file.path, { quality: 'auto' });
     const { email, fullname, username, password, gender, age, role } = req.body
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await prisma.user.create({
