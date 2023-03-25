@@ -73,7 +73,7 @@ export const login = tryToCatch(async (req, res, next) => {
     } else {
         if (await bcrypt.compare(req.body.password, user.password)) {
             const userWithoutPassword = exclude(user, 'password')
-            const accessToken = jwt.sign(userWithoutPassword, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" })
+            const accessToken = jwt.sign(userWithoutPassword, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "50m" })
             const refreshT = jwt.sign(userWithoutPassword, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "30d" })
             const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
             const clientId = "myapp"
@@ -113,7 +113,7 @@ export const token = tryToCatch(async (req, res, next) => {
     if (!refreshTokenData.user) {
         return next(new customError("Invalid user data", 400));
     }
-    const accessToken = jwt.sign(refreshTokenData.user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+    const accessToken = jwt.sign(refreshTokenData.user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "50m" });
     res.status(200).json({ accessToken });
 })
 
@@ -127,7 +127,7 @@ export const authenticateToken = tryToCatch(async (req, res, next) => {
 
 })
 
-export const restrictTo = (...roles) => {
+export const restrictTo = (roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
             return next(new customError("You don't have permission to access this action", 403))

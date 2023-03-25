@@ -1,6 +1,6 @@
 import express from "express"
 import { authenticateToken, restrictTo } from "../controllers/auth.controller.js";
-import { createPerson, deletePerson, getAllPerson, getPerson, updatePerson } from "../controllers/company.controller.js";
+import { createPerson, deletePerson, getAllPersons, getPerson, updatePerson } from "../controllers/person.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 
 
@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.route("/")
     .post(authenticateToken, createPerson)
-    .get(getAllPerson)
+    .get(getAllPersons)
 router.route("/:id")
     .get(getPerson)
     .put(authenticateToken, restrictTo(["ADMIN"]), validateRequest, updatePerson)

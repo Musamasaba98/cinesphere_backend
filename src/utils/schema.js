@@ -23,14 +23,14 @@ const post = Joi.object({
     content: Joi.string().min(10).max(256).required(),
     categories: Joi.array().items(Joi.string()).required()
 })
-//category schema
-const category = Joi.object({
-    name: Joi.string().min(10).required()
+//genre schema
+const genre = Joi.object({
+    name: Joi.string().required()
 })
 
 export default {
     '/api/v1/user/signup': user,
     '/api/v1/user/login': login,
-    '/api/v1/posts': post,
-    '/api/v1/category': category,
+    '/api/v1/genre': genre,
+    '/api/v1/posts': post
 }

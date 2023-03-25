@@ -1,6 +1,6 @@
 import express from "express"
 import { authenticateToken, restrictTo } from "../controllers/auth.controller.js";
-import { createKeyword, deleteKeyword, getAllKeywords, getKeyword, updateKeyword } from "../controllers/company.controller.js";
+import { createKeyword, deleteKeyword, getAllKeywords, getKeyword, updateKeyword } from "../controllers/keyword.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 
 

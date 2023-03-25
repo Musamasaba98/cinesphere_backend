@@ -8,12 +8,12 @@ const validateRequest = validation(true)
 const router = express.Router()
 
 router.route("/")
-    .post(authenticateToken, restrictTo(["ADMIN"]), validateRequest, addGenre)
+    .post(authenticateToken, restrictTo(["USER", "ADMIN"]), validateRequest, addGenre)
     .get(getAllGenries)
 router.route("/:id")
     .get(getGenre)
-    .put(authenticateToken, restrictTo(["ADMIN"]), validateRequest, updateGenre)
-    .delete(authenticateToken, restrictTo(["ADMIN"]), validateRequest, deleteGenre)
+    .patch(authenticateToken, restrictTo(["USER", "ADMIN"]), updateGenre)
+    .delete(authenticateToken, restrictTo(["USER", "ADMIN"]), deleteGenre)
 
 
 export default router;

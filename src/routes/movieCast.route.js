@@ -1,6 +1,6 @@
 import express from "express"
 import { authenticateToken, restrictTo } from "../controllers/auth.controller.js";
-import { createMovieCast, deleteMovieCast, getAllMovieCast, getMovieCast, updateMovieCast } from "../controllers/company.controller.js";
+import { createMovieCast, deleteMovieCast, getAllMovieCasts, getMovieCast, updateMovieCast } from "../controllers/movieCast.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 
 
@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.route("/")
     .post(authenticateToken, createMovieCast)
-    .get(getAllMovieCast)
+    .get(getAllMovieCasts)
 router.route("/:id")
     .get(getMovieCast)
     .put(authenticateToken, restrictTo(["ADMIN"]), validateRequest, updateMovieCast)

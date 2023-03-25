@@ -1,6 +1,6 @@
 import express from "express"
 import { authenticateToken, restrictTo } from "../controllers/auth.controller.js";
-import { createJobTitle, deleteJobTitle, getAllJobTitle, getJobTitle, updateJobTitle } from "../controllers/company.controller.js";
+import { createJobTitle, deleteJobTitle, getAllJobTitles, getJobTitle, updateJobTitle } from "../controllers/jobTitle.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 
 
@@ -9,11 +9,11 @@ const router = express.Router()
 
 router.route("/")
     .post(authenticateToken, createJobTitle)
-    .get(getAllJobTitle)
+    .get(getAllJobTitles)
 router.route("/:id")
     .get(getJobTitle)
-    .put(authenticateToken, restrictTo(["ADMIN"]), validateRequest, updateJobTitle)
-    .delete(authenticateToken, restrictTo(["ADMIN"]), validateRequest, deleteJobTitle)
+    .patch(authenticateToken, restrictTo(["USER", "ADMIN"]), updateJobTitle)
+    .delete(authenticateToken, restrictTo(["USER", "ADMIN"]), deleteJobTitle)
 
 
 export default router;
