@@ -16,7 +16,15 @@ export const deleteOne = Model => tryToCatch(async (req, res, next) => {
     res.status(204).json({ status: "success", message: `${toSentenceCase(Model)} has successfully been deleted` })
 
 })
-
+export const createOne = Model => tryToCatch(async (req, res, next) => {
+    const item = await prisma[Model].create({
+        data: req.body
+    })
+    if (!item) {
+        return next(new customError(`The ${Model} has failed to create.`))
+    }
+    res.status(201).send({ status: "success", data: item })
+})
 export const updateOne = Modal => tryToCatch(async (req, res, next) => {
     const updated = await prisma[Modal].update({
         where: {

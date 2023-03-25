@@ -3,7 +3,7 @@ import prisma from "../config/prisma.config.js";
 import customError from "../utils/customError.js";
 import { toSentenceCase } from "../utils/toSentenceCase.js";
 import tryToCatch from "../utils/tryToCatch.js";
-import { deleteOne, getAll, getOne, updateOne } from "./factory.controller.js";
+import { getAll, getOne, updateOne } from "./factory.controller.js";
 
 //Add a movie
 export const addMovie = tryToCatch(async (req, res) => {
