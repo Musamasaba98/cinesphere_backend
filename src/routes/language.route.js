@@ -12,8 +12,8 @@ router.route("/")
     .get(getAllLanguages)
 router.route("/:id")
     .get(getLanguage)
-    .put(authenticateToken, restrictTo(["ADMIN"]), validateRequest, updateLanguage)
-    .delete(authenticateToken, restrictTo(["ADMIN"]), validateRequest, deleteLanguage)
+    .patch(authenticateToken, restrictTo(["USER", "ADMIN"]), updateLanguage)
+    .delete(authenticateToken, restrictTo(["USER", "ADMIN"]), deleteLanguage)
 
 
 export default router;

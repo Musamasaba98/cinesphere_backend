@@ -12,11 +12,12 @@ import departmentRouter from "./src/routes/department.route.js"
 import companyRouter from "./src/routes/company.route.js"
 import errorHandler from "./src/middlewares/errorHandler.js";
 import customError from "./src/utils/customError.js";
+import { corsOptions } from "./src/config/corsOptions.config.js";
 
 
 const app = express();
 
-app.use(cors())
+app.use(cors(corsOptions))
 app.use("/static", express.static("./src/public"));
 app.use(express.json({ limit: '1gb' }));
 app.use(express.urlencoded({ limit: '1gb', extended: true }));
@@ -25,7 +26,7 @@ app.use("/api/v1/movies", movieRouter)
 app.use("/api/v1/genre", genreRouter)
 app.use("/api/v1/person", personRouter)
 app.use("/api/v1/movieCast", movieCastRouter)
-app.use("/api/v1/laguage", languageRouter)
+app.use("/api/v1/language", languageRouter)
 app.use("/api/v1/keyword", keywordRouter)
 app.use("/api/v1/jobTitle", jobTitleRouter)
 app.use("/api/v1/department", departmentRouter)

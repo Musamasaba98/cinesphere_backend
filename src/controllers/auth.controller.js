@@ -73,11 +73,11 @@ export const login = tryToCatch(async (req, res, next) => {
     } else {
         if (await bcrypt.compare(req.body.password, user.password)) {
             const userWithoutPassword = exclude(user, 'password')
-            const accessToken = jwt.sign(userWithoutPassword, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "50m" })
-            const refreshT = jwt.sign(userWithoutPassword, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "30d" })
-            const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+            const accessToken = jwt.sign(userWithoutPassword, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" })
+            const refreshT = jwt.sign(userWithoutPassword, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "7d" })
+            const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
             const clientId = "myapp"
-            const refreshToken = await prisma.refreshToken.create({
+            await prisma.refreshToken.create({
                 data: {
                     user: {
                         connect: {
@@ -89,14 +89,24 @@ export const login = tryToCatch(async (req, res, next) => {
                     expiresAt
                 }
             })
-            res.status(200).json({ status: "success", accessToken, refreshToken })
+            res.status(200).json({ status: "success", accessToken })
+            res.cookie('jwt', refreshT, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None",
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            })
         } else {
             next(new customError("Password or Email is incorrect", 401))
         }
     }
 })
 export const token = tryToCatch(async (req, res, next) => {
-    const { refreshToken } = req.body;
+    const cookies = req.cookies
+    if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' })
+
+    const refreshToken = cookies.jwt
+
     const refreshTokenData = await prisma.refreshToken.findFirst({
         where: {
             token: refreshToken,
@@ -113,7 +123,7 @@ export const token = tryToCatch(async (req, res, next) => {
     if (!refreshTokenData.user) {
         return next(new customError("Invalid user data", 400));
     }
-    const accessToken = jwt.sign(refreshTokenData.user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "50m" });
+    const accessToken = jwt.sign(refreshTokenData.user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
     res.status(200).json({ accessToken });
 })
 
@@ -135,4 +145,11 @@ export const restrictTo = (roles) => {
         // call next function to move on to the next middleware
         next()
     }
+}
+
+export const logout = (req, res) => {
+    const cookies = req.cookies
+    if (!cookies?.jwt) return res.sendStatus(204) //No content
+    res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true })
+    res.json({ message: 'Cookie cleared' })
 }

@@ -1,5 +1,5 @@
 import express from "express"
-import { login, signup, token, updatePassword } from "../controllers/auth.controller.js";
+import { login, logout, signup, token, updatePassword } from "../controllers/auth.controller.js";
 import { deleteUser, findAllUsers, findUser, updateUser } from "../controllers/user.controller.js";
 import validation from "../middlewares/validation.middleware.js";
 import { uploadImage } from "../config/multer.config.js";
@@ -18,5 +18,6 @@ router.route("/:id")
 router.route("/updateAuth/:id").patch(updatePassword)
 router.post('/token', token)
 router.post("/login", validateRequest, login)
+router.post("/logout", logout)
 router.post("/signup", uploadImage.single("image"), signup)
 export default router;
