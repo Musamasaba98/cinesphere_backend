@@ -22,7 +22,7 @@ const handlePrismaError = (err) => {
 
 const handleJWTError = () => new customError('Invalid token please login again', 400);
 
-const handleJWTExpiredError = () => new customError('Token has expired please login again', 400);
+const handleJWTExpiredError = () => new customError('Token has expired please login again', 403);
 
 const handleUserPermissionError = () => new customError("You don't have permission to access this action", 403);
 

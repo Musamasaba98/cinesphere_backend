@@ -24,8 +24,7 @@ const validation = (useJoiError = false) => {
         if (_.includes(_supportMethods, method) && _.has(Schemas, route)) {
 
             const _schema = _.get(Schemas, route)
-            console.log(req.body)
-            console.log(_schema.validate(req.body))
+
             if (_schema) {
                 const { error } = _schema.validate(req.body, _validationOptions)
                 if (error) {

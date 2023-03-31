@@ -13,11 +13,14 @@ import companyRouter from "./src/routes/company.route.js"
 import errorHandler from "./src/middlewares/errorHandler.js";
 import customError from "./src/utils/customError.js";
 import { corsOptions } from "./src/config/corsOptions.config.js";
+import cookieParser from "cookie-parser";
 
 
 const app = express();
 
+
 app.use(cors(corsOptions))
+app.use(cookieParser())
 app.use("/static", express.static("./src/public"));
 app.use(express.json({ limit: '1gb' }));
 app.use(express.urlencoded({ limit: '1gb', extended: true }));

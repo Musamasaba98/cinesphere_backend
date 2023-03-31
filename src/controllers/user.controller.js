@@ -8,8 +8,8 @@ export const findAllUsers = getAll("user")
 //Find a user
 export const findUser = getOne("user")
 
-//Update a User
-export const updateUser = updateOne("user")
-
 //Delete a User
 export const deleteUser = deleteOne("user")
+
+//Update a User
+export const updateUser = updateOne("user")
