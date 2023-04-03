@@ -11,9 +11,9 @@ import cloudinary from "../config/cloudinary.config.js";
 export const signup = tryToCatch(async (req, res) => {
     const result = await cloudinary.uploader.upload(req.file.path, {
         transformation: [
-            { gravity: "face", height: 400, width: 400, crop: "crop" },
+            { gravity: "face", height: 120, width: 80, crop: "fill" },
             { radius: "max" },
-            { width: 200, crop: "scale" }
+            { width: 40, height: 40, crop: "fill" }
         ]
     });
     const { email, fullname, username, password, gender, age, role, emailUpdates } = req.body
@@ -78,7 +78,7 @@ export const login = tryToCatch(async (req, res, next) => {
         if (await bcrypt.compare(req.body.password, user.password)) {
             const userWithoutPassword = exclude(user, "password");
             const accessToken = jwt.sign(userWithoutPassword, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: "20s",
+                expiresIn: "30m",
             });
             const refreshT = jwt.sign(userWithoutPassword, process.env.REFRESH_TOKEN_SECRET, {
                 expiresIn: "7d",
@@ -123,7 +123,7 @@ export const login = tryToCatch(async (req, res, next) => {
                 sameSite: "None",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-            res.status(200).json({ status: "success", accessToken, user: req.body });
+            res.status(200).json({ status: "success", accessToken });
         } else {
             next(new customError("Password or Email is incorrect", 401));
         }
@@ -153,7 +153,7 @@ export const token = tryToCatch(async (req, res, next) => {
         return next(new customError("Invalid user data", 400));
     }
 
-    const accessToken = jwt.sign(refreshTokenData.user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" });
+    const accessToken = jwt.sign(refreshTokenData.user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "30m" });
 
     res.status(200).json({ accessToken });
 })

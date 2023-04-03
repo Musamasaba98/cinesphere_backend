@@ -72,7 +72,9 @@ export const getAll = (Modal) => tryToCatch(async (req, res) => {
                 (key, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
             ))
         })
+    } else {
+
+        res.status(200).json({ status: "success", results: items.length, data: items })
     }
-    res.status(200).json({ status: "success", results: items.length, data: items })
 
 })

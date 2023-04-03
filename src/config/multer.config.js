@@ -18,5 +18,5 @@ const videoStorage = new CloudinaryStorage({
         public_id: (req, file) => file.originalname
     }
 })
-export const uploadImage = multer({ storage: imageStorage, limits: { fileSize: 100000000 } })
+export const uploadImage = multer({ storage: imageStorage })
 export const uploadVideo = multer({ storage: videoStorage, limits: { fileSize: 150000000 } })
