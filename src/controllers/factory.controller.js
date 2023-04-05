@@ -67,6 +67,7 @@ export const getOne = (Modal) => tryToCatch(async (req, res, next) => {
 export const getAll = (Modal) => tryToCatch(async (req, res) => {
     const items = await prisma[Modal].findMany()
     if (Modal === 'movie') {
+
         res.status(200).json({
             status: "success", results: items.length, data: JSON.parse(JSON.stringify(
                 items,

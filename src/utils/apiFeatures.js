@@ -16,11 +16,11 @@ export const searchMovieTerm = async (searchTerm) => {
                 OR: [
                     { title: { contains: searchTerm, mode: 'insensitive' } },
                     { description: { contains: searchTerm, mode: 'insensitive' } },
-                    { genreId: { contains: genre.id, mode: 'insensitive' } }
+                    { genre: { some: { name: { contains: genre.name, mode: 'insensitive' } } } }
                 ]
             },
             take: 20
-        })
+        });
         return movies
     } else {
         const movies = await prisma.movie.findMany({
