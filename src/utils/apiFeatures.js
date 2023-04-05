@@ -10,8 +10,6 @@ export const searchMovieTerm = async (searchTerm) => {
         }
     })
 
-    console.log(genre)
-
     if (genre) {
         const movies = await prisma.movie.findMany({
             where: {
@@ -23,9 +21,6 @@ export const searchMovieTerm = async (searchTerm) => {
             },
             take: 20
         })
-
-        console.log(movies)
-
         return movies
     } else {
         const movies = await prisma.movie.findMany({

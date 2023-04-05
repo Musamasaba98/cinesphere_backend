@@ -43,7 +43,6 @@ export const addMovie = tryToCatch(async (req, res) => {
 
 })
 export const updateMovieImages = tryToCatch(async (req, res, next) => {
-    console.log(req.body)
     const uploadedFiles = [];
     for (const fieldname in req.files) {
         const file = req.files[fieldname][0];
@@ -80,7 +79,6 @@ export const updateMovieImages = tryToCatch(async (req, res, next) => {
     })
 })
 export const updateMovieData = tryToCatch(async (req, res, next) => {
-    console.log(req.body)
     const { budget, revenue, releaseStatus, release_date,
         productionCompanies } = req.body
 
@@ -113,9 +111,7 @@ export const updateMovieData = tryToCatch(async (req, res, next) => {
 })
 export const searchMovies = tryToCatch(async (req, res, next) => {
     const searchTerm = req.query.q;
-    console.log(searchTerm)
     const movies = await searchMovieTerm(searchTerm);
-    console.log(movies)
     res.status(201).send({
         status: "success", results: JSON.parse(JSON.stringify(
             movies,
@@ -132,6 +128,27 @@ export const deleteMovie = tryToCatch(async (req, res, next) => {
             movieId: id
         }
     });
+    const movie = await prisma.movie.findUnique({
+        where: {
+            id: id
+        }
+    })
+    const imagepublic_id = movie.cloudinary_imageUrl_public_id
+    const coverpublic_id = movie.cloudinary_coverUrl_public_id
+    await cloudinary.uploader.destroy(imagepublic_id, (error, result) => {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log(result);
+        }
+    });
+    await cloudinary.uploader.destroy(coverpublic_id, (error, result) => {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log(result);
+        }
+    })
     const deleted = await prisma.movie.delete({
         where: {
             id: id

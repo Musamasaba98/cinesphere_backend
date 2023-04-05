@@ -5,6 +5,7 @@ import tryToCatch from "../utils/tryToCatch.js";
 
 export const deleteOne = Model => tryToCatch(async (req, res, next) => {
     const id = req.params.id
+
     const deleted = await prisma[Model].delete({
         where: {
             id: id

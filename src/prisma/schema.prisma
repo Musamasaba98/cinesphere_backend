@@ -15,6 +15,7 @@ model User {
   email                String          @unique
   fullname             String?
   age                  Int
+  description          String?
   username             String          @unique
   gender               Gender?
   password             String
@@ -76,8 +77,7 @@ model Movie {
   createdAt                       DateTime?                @default(now()) @db.Timestamp
   MovieCast                       MovieCast[]
   MovieCrew                       MovieCrew[]
-  Genre                           Genre?                   @relation(fields: [genreId], references: [id])
-  genreId                         String?
+  Genre                           Genre[]
   Language                        Language?                @relation(fields: [languageId], references: [id])
   languageId                      String?
   createdBy                       User?                    @relation("addedMovies", fields: [creatorId], references: [id])
@@ -124,32 +124,33 @@ model ProductionCompany {
 }
 
 model Person {
-  id           String      @id @default(uuid())
-  personName   String
-  personGender Gender?
-  MovieCrew    MovieCrew[]
-  MovieCast    MovieCast[]
+  id                            String      @id @default(uuid())
+  name                          String
+  gender                        Gender?
+  imageUrl                      String?
+  cloudinary_imageUrl_public_id String?
+  MovieCrew                     MovieCrew[]
+  MovieCast                     MovieCast[]
 }
 
 model MovieCrew {
-  id                  String                @id @default(uuid())
-  jobTitle            JobTitle?             @relation(fields: [jobTitleId], references: [id])
-  personId            String?
-  Person              Person?               @relation(fields: [personId], references: [id])
-  movie               Movie                 @relation(fields: [movieId], references: [id])
-  jobTitleId          String?
-  movieId             String
-  Department          Department[]
-  MovieCrewDepartment MovieCrewDepartment[]
+  id         String                @id @default(uuid())
+  jobTitle   JobTitle?             @relation(fields: [jobTitleId], references: [id])
+  personId   String?
+  person     Person?               @relation(fields: [personId], references: [id])
+  movie      Movie                 @relation(fields: [movieId], references: [id])
+  jobTitleId String?
+  movieId    String
+  department MovieCrewDepartment[]
 }
 
 model MovieCast {
-  id            String  @id @default(uuid())
-  characterName String?
-  personId      String?
-  movie         Movie   @relation(fields: [movieId], references: [id])
-  movieId       String
-  Person        Person? @relation(fields: [personId], references: [id])
+  id        String  @id @default(uuid())
+  character String?
+  personId  String?
+  movie     Movie   @relation(fields: [movieId], references: [id])
+  movieId   String
+  person    Person? @relation(fields: [personId], references: [id])
 }
 
 model MovieCrewDepartment {
@@ -161,11 +162,9 @@ model MovieCrewDepartment {
 }
 
 model Department {
-  id                  String                @id @default(uuid())
-  name                String
-  crew                MovieCrew             @relation(fields: [movieCrewId], references: [id])
-  movieCrewId         String
-  MovieCrewDepartment MovieCrewDepartment[]
+  id   String                @id @default(uuid())
+  name String
+  crew MovieCrewDepartment[]
 }
 
 model JobTitle {
