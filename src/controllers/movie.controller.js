@@ -29,7 +29,9 @@ export const addMovie = tryToCatch(async (req, res) => {
                 }
             },
             Genre: {
-                connect: { name: Genre }
+                genre: {
+                    connect: { name: Genre }
+                }
             }
         }
     })
@@ -79,6 +81,7 @@ export const updateMovieImages = tryToCatch(async (req, res, next) => {
     })
 })
 export const updateMovieData = tryToCatch(async (req, res, next) => {
+
     const { budget, revenue, releaseStatus, release_date,
         productionCompanies } = req.body
 
