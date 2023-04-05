@@ -6,6 +6,7 @@ import bcrypt from 'bcryptjs'
 import exclude from "../utils/prisma.exclude.js";
 import { promisify } from 'util'
 import cloudinary from "../config/cloudinary.config.js";
+import crypto from 'crypto';
 
 
 export const signup = tryToCatch(async (req, res) => {
