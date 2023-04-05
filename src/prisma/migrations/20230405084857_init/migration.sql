@@ -10,6 +10,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "fullname" TEXT,
     "age" INTEGER NOT NULL,
+    "description" TEXT,
     "username" TEXT NOT NULL,
     "gender" "Gender",
     "password" TEXT NOT NULL,
@@ -52,17 +53,20 @@ CREATE TABLE "Movie" (
     "description" VARCHAR(1000),
     "price" INTEGER NOT NULL,
     "coverUrl" VARCHAR(1000),
-    "imageUrl" TEXT[],
+    "cloudinary_coverUrl_public_id" TEXT,
+    "imageUrl" TEXT,
+    "cloudinary_imageUrl_public_id" TEXT,
     "videoUrl" VARCHAR(1000),
+    "cloudinary_videoUrl_public_id" TEXT,
     "trailerUrl" VARCHAR(1000),
-    "budget" BIGINT NOT NULL,
-    "revenue" BIGINT NOT NULL,
-    "voteCount" INTEGER NOT NULL,
-    "voteAverage" DOUBLE PRECISION NOT NULL,
-    "releaseStatus" BOOLEAN NOT NULL,
-    "release_date" TIMESTAMP NOT NULL,
-    "createdAt" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "genreId" TEXT,
+    "cloudinary_trailerUrl_public_id" TEXT,
+    "budget" BIGINT,
+    "revenue" BIGINT,
+    "voteCount" INTEGER,
+    "voteAverage" DOUBLE PRECISION,
+    "releaseStatus" BOOLEAN,
+    "release_date" TIMESTAMP,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     "languageId" TEXT,
     "creatorId" TEXT,
     "favouritedById" TEXT,
@@ -82,6 +86,30 @@ CREATE TABLE "Genre" (
 );
 
 -- CreateTable
+CREATE TABLE "Reviews" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "rating" INTEGER NOT NULL,
+    "text" TEXT NOT NULL,
+    "movieId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Reviews_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ReviewReply" (
+    "id" TEXT NOT NULL,
+    "reviewsId" TEXT,
+    "text" TEXT NOT NULL,
+    "userId" TEXT,
+    "reviewReplyId" TEXT,
+
+    CONSTRAINT "ReviewReply_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Language" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -91,11 +119,11 @@ CREATE TABLE "Language" (
 
 -- CreateTable
 CREATE TABLE "MovieProductionCompany" (
-    "id" TEXT NOT NULL,
-    "movie_id" TEXT NOT NULL,
-    "production_company_id" TEXT NOT NULL,
+    "movieId" TEXT NOT NULL,
+    "productionCompanyId" TEXT NOT NULL,
+    "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "MovieProductionCompany_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "MovieProductionCompany_pkey" PRIMARY KEY ("movieId","productionCompanyId")
 );
 
 -- CreateTable
@@ -109,8 +137,11 @@ CREATE TABLE "ProductionCompany" (
 -- CreateTable
 CREATE TABLE "Person" (
     "id" TEXT NOT NULL,
-    "personName" TEXT NOT NULL,
-    "personGender" "Gender",
+    "name" TEXT NOT NULL,
+    "gender" "Gender",
+    "details" TEXT,
+    "imageUrl" TEXT,
+    "cloudinary_imageUrl_public_id" TEXT,
 
     CONSTRAINT "Person_pkey" PRIMARY KEY ("id")
 );
@@ -128,7 +159,7 @@ CREATE TABLE "MovieCrew" (
 -- CreateTable
 CREATE TABLE "MovieCast" (
     "id" TEXT NOT NULL,
-    "characterName" TEXT,
+    "character" TEXT,
     "personId" TEXT,
     "movieId" TEXT NOT NULL,
 
@@ -148,7 +179,6 @@ CREATE TABLE "MovieCrewDepartment" (
 CREATE TABLE "Department" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "movieCrewId" TEXT NOT NULL,
 
     CONSTRAINT "Department_pkey" PRIMARY KEY ("id")
 );
@@ -162,7 +192,7 @@ CREATE TABLE "JobTitle" (
 );
 
 -- CreateTable
-CREATE TABLE "_MovieToProductionCompany" (
+CREATE TABLE "_GenreToMovie" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
@@ -201,19 +231,16 @@ CREATE UNIQUE INDEX "Language_name_key" ON "Language"("name");
 CREATE UNIQUE INDEX "ProductionCompany_name_key" ON "ProductionCompany"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_MovieToProductionCompany_AB_unique" ON "_MovieToProductionCompany"("A", "B");
+CREATE UNIQUE INDEX "_GenreToMovie_AB_unique" ON "_GenreToMovie"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_MovieToProductionCompany_B_index" ON "_MovieToProductionCompany"("B");
+CREATE INDEX "_GenreToMovie_B_index" ON "_GenreToMovie"("B");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_userPreferenceId_fkey" FOREIGN KEY ("userPreferenceId") REFERENCES "UserPreference"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Movie" ADD CONSTRAINT "Movie_genreId_fkey" FOREIGN KEY ("genreId") REFERENCES "Genre"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Movie" ADD CONSTRAINT "Movie_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Language"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -234,10 +261,25 @@ ALTER TABLE "Movie" ADD CONSTRAINT "Movie_watchedById_fkey" FOREIGN KEY ("watche
 ALTER TABLE "Movie" ADD CONSTRAINT "Movie_watchLaterById_fkey" FOREIGN KEY ("watchLaterById") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MovieProductionCompany" ADD CONSTRAINT "MovieProductionCompany_movie_id_fkey" FOREIGN KEY ("movie_id") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Reviews" ADD CONSTRAINT "Reviews_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MovieProductionCompany" ADD CONSTRAINT "MovieProductionCompany_production_company_id_fkey" FOREIGN KEY ("production_company_id") REFERENCES "ProductionCompany"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Reviews" ADD CONSTRAINT "Reviews_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ReviewReply" ADD CONSTRAINT "ReviewReply_reviewsId_fkey" FOREIGN KEY ("reviewsId") REFERENCES "Reviews"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ReviewReply" ADD CONSTRAINT "ReviewReply_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ReviewReply" ADD CONSTRAINT "ReviewReply_reviewReplyId_fkey" FOREIGN KEY ("reviewReplyId") REFERENCES "ReviewReply"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MovieProductionCompany" ADD CONSTRAINT "MovieProductionCompany_movieId_fkey" FOREIGN KEY ("movieId") REFERENCES "Movie"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MovieProductionCompany" ADD CONSTRAINT "MovieProductionCompany_productionCompanyId_fkey" FOREIGN KEY ("productionCompanyId") REFERENCES "ProductionCompany"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MovieCrew" ADD CONSTRAINT "MovieCrew_jobTitleId_fkey" FOREIGN KEY ("jobTitleId") REFERENCES "JobTitle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -261,10 +303,7 @@ ALTER TABLE "MovieCrewDepartment" ADD CONSTRAINT "MovieCrewDepartment_movieCrewI
 ALTER TABLE "MovieCrewDepartment" ADD CONSTRAINT "MovieCrewDepartment_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "Department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Department" ADD CONSTRAINT "Department_movieCrewId_fkey" FOREIGN KEY ("movieCrewId") REFERENCES "MovieCrew"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_GenreToMovie" ADD CONSTRAINT "_GenreToMovie_A_fkey" FOREIGN KEY ("A") REFERENCES "Genre"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_MovieToProductionCompany" ADD CONSTRAINT "_MovieToProductionCompany_A_fkey" FOREIGN KEY ("A") REFERENCES "Movie"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_MovieToProductionCompany" ADD CONSTRAINT "_MovieToProductionCompany_B_fkey" FOREIGN KEY ("B") REFERENCES "ProductionCompany"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_GenreToMovie" ADD CONSTRAINT "_GenreToMovie_B_fkey" FOREIGN KEY ("B") REFERENCES "Movie"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -2,7 +2,6 @@ import prisma from "../config/prisma.config.js";
 
 //Search for movies
 export const searchMovieTerm = async (searchTerm) => {
-    console.log(searchTerm)
 
     const genre = await prisma.genre.findFirst({
         where: {
@@ -32,8 +31,6 @@ export const searchMovieTerm = async (searchTerm) => {
             },
             take: 20
         })
-
-        console.log(movies)
 
         return movies
     }

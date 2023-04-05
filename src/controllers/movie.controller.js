@@ -114,7 +114,8 @@ export const updateMovieData = tryToCatch(async (req, res, next) => {
 })
 export const searchMovies = tryToCatch(async (req, res, next) => {
     const searchTerm = req.query.q;
-    const movies = await searchMovieTerm(searchTerm);
+    const movies = await searchMovieTerm(searchTerm); d
+
     res.status(201).send({
         status: "success", results: JSON.parse(JSON.stringify(
             movies,
