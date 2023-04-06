@@ -79,7 +79,7 @@ model Movie {
   createdAt                       DateTime?                @default(now()) @db.Timestamp
   MovieCast                       MovieCast[]
   MovieCrew                       MovieCrew[]
-  Genre                           Genre[]
+  genre                           Genre[]                  @relation("MovieGenre")
   Language                        Language?                @relation(fields: [languageId], references: [id])
   languageId                      String?
   createdBy                       User?                    @relation("addedMovies", fields: [creatorId], references: [id])
@@ -101,7 +101,7 @@ model Movie {
 model Genre {
   id     String  @id @default(uuid())
   name   String  @unique
-  movies Movie[]
+  movies Movie[] @relation("MovieGenre")
 }
 
 model Reviews {

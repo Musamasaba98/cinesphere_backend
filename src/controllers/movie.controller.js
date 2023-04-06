@@ -28,10 +28,8 @@ export const addMovie = tryToCatch(async (req, res) => {
                     email: email
                 }
             },
-            Genre: {
-                genre: {
-                    connect: { name: Genre }
-                }
+            genre: {
+                connect: { name: Genre }
             }
         }
     })
