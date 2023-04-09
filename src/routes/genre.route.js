@@ -8,7 +8,7 @@ const validateRequest = validation(true)
 const router = express.Router()
 
 router.route("/")
-    .post(authenticateToken, restrictTo(["USER", "ADMIN"]), validateRequest, addGenre)
+    .post(authenticateToken, validateRequest, addGenre)
     .get(getAllGenries)
 router.route("/:id")
     .get(getGenre)
